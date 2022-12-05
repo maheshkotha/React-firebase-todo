@@ -2,11 +2,14 @@ import React, { useState, useEffect } from "react";
 import { TextField, Button } from "@mui/material";
 import Todo from "./components/Todo";
 import { db } from "./firebase.js";
+
 import {
   collection,
   addDoc,
   serverTimestamp,
   getDocs,
+  doc,
+  deleteDoc
 } from "firebase/firestore";
 import "./App.css";
 
@@ -16,11 +19,12 @@ function App() {
 
   const todoRef = collection(db, "todos");
 
+  const getTodos = async () => {
+    let data = await getDocs(todoRef);
+    setTodos(data.docs.map((doc) => ({ ...doc.data() })));
+  };
+
   useEffect(() => {
-    const getTodos = async () => {
-      let data = await getDocs(todoRef);
-      setTodos(data.docs.map((doc) => ({ ...doc.data() })));
-    };
     getTodos();
   }, []);
 
@@ -30,10 +34,16 @@ function App() {
       todo: input,
       timestamp: serverTimestamp(),
     });
-    console.log("click");
     setInput("");
+    getTodos();
   };
 
+  const deleteTodo = (todo) => {
+    // db.collection("todos").document(todo)
+    // .delete()
+    // console.log(todo)
+    // deleteDoc(doc(db, "todos", todo.todo));
+  } 
 
   return (
     <div className="App">
@@ -54,8 +64,8 @@ function App() {
       </form>
       <ul>
         {todos.map((item) => (
-          <Todo key={item.id} arr={item} />
-        ))}
+          <Todo key={item.id} item={item} deleteTodo={deleteTodo} />
+        ))} 
       </ul>
     </div>
   );

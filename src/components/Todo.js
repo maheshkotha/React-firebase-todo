@@ -1,22 +1,20 @@
 import React from "react";
 import { List, ListItem, ListItemAvatar, ListItemText } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { db } from "../firebase.js";
-import { doc, deleteDoc } from "firebase/firestore";
 import "./todo.css";
 
-const Todo = ({ arr }) => {
+const Todo = ({ item, deleteTodo, key }) => {
   return (
-    <List className="todo__list">
+    <List className="todo__list" key={key}>
       <ListItem>
         <ListItemAvatar />
-        <ListItemText primary={arr.todo} />
+        <ListItemText primary={item.todo} />
       </ListItem>
       <DeleteIcon
         fontSize="large"
         style={{ opacity: 0.7 }}
         onClick={() => {
-          deleteDoc(doc(db, "todos", arr.id));
+          deleteTodo(item)
         }}
       />
     </List>
